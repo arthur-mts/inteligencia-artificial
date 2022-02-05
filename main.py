@@ -68,7 +68,7 @@ def a_star(a, b, grafo: Grafo, h):
         percordidos.remove(vertice_cor)
 
         for vizinho in grafo.arestas_sobre_vertice(vertice_cor):
-            
+
 
 
 
