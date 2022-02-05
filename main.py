@@ -1,4 +1,7 @@
 from models.graph import Grafo
+from utils.csv_reader import CsvReader
+
+reader = CsvReader("files/heuristica.csv", "files/arestas.csv")
 
 
 def deep_search(grafo, a, b):
@@ -41,7 +44,7 @@ def bfs(grafo: Grafo, a, b):
 
 def a_star(a, b, grafo: Grafo, h):
     def f(n, d):
-        if d == b:
+        if n == b:
             return 0
         aresta = f"{n}-{d}"
         if not grafo.existeAresta(aresta):
@@ -53,25 +56,28 @@ def a_star(a, b, grafo: Grafo, h):
         while corrente in _veio_de.keys():
             corrente = _veio_de[corrente]
             caminho_final = [corrente] + caminho_final
-            caminho_final.append(b)
+        caminho_final.append(b)
         return caminho_final
 
-    percordidos = set()
+    para_percorrer = set()
     veio_de = {}
     g_score = {}
+    f_score = {}
 
     vertice_cor = a
 
-    percordidos.add(vertice_cor)
+    para_percorrer.add(vertice_cor)
 
     g_score[vertice_cor] = 0
+    f_score[vertice_cor] = h(vertice_cor)
 
-    while percordidos:
-        vertice_cor = min(percordidos, key=lambda o: f(o, b))
+    while para_percorrer:
+
+        vertice_cor = min(para_percorrer, key=lambda o: f_score[o])
         if vertice_cor == b:
             return reconstroi_caminho(veio_de, vertice_cor)
 
-        percordidos.remove(vertice_cor)
+        para_percorrer.remove(vertice_cor)
 
         for vizinho in grafo.arestas_sobre_vertice(vertice_cor):
             tentativa = -1 if g_score.get(vertice_cor) is None else g_score.get(vertice_cor) + grafo.valor_aresta(
@@ -81,27 +87,23 @@ def a_star(a, b, grafo: Grafo, h):
             if g_score_c == -1 or tentativa < g_score_c:
                 veio_de[vizinho] = vertice_cor
                 g_score[vizinho] = tentativa
+                f_score[vizinho] = g_score_c + h(vizinho)
 
-                percordidos.add(vizinho)
+                para_percorrer.add(vizinho)
     raise Exception()
 
 
 def h(vertice):
-    return {
-        "RMG": 0,
-        "AREIA": 2,
-        "ESP": 1,
-        "LDM": 2
-    }[vertice]
+    return reader.ler_tabela_heuristica()[vertice]
 
 
 def main():
-    grafo = Grafo(["RMG", "ESP", "AREIA", "LDM"])
-    grafo.adicionaAresta("RMG-ESP", 5)
-    grafo.adicionaAresta("RMG-AREIA", 2)
-    grafo.adicionaAresta("LDM-RMG", 2)
-    grafo.adicionaAresta("AREIA-LDM", 1)
-    print(a_star("AREIA", "RMG", grafo, h))
+    grafo = Grafo(reader.ler_vertices())
+    for aresta_c in reader.ler_arestas():
+        grafo.adicionaAresta(aresta_c["aresta"], aresta_c["distancia"])
+    print(deep_search(grafo, "RMG", "LS"))
+    print(bfs(grafo, "RMG", "LS"))
+    print(a_star("RMG", "LS", grafo, h))
 
 
 if __name__ == '__main__':
