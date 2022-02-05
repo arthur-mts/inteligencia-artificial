@@ -151,10 +151,13 @@ class Grafo:
         """
         return self.N.index(self.__segundo_vertice_aresta(a))
 
-    def valorAresta(self, a: str):
+    def valor_aresta(self, a: str):
         if not self.existeAresta(a):
             raise Exception("Aresta não existente")
-        return self.M[self.__indice_primeiro_vertice_aresta(a)][self.__indice_segundo_vertice_aresta(a)]
+        valor = self.M[self.__indice_primeiro_vertice_aresta(a)][self.__indice_segundo_vertice_aresta(a)]
+        if valor == "-":
+            valor = self.M[self.__indice_segundo_vertice_aresta(a)][self.__indice_primeiro_vertice_aresta(a)]
+        return valor
 
     def existeAresta(self, a: str):
         """
@@ -262,10 +265,14 @@ class Grafo:
     def arestas_sobre_vertice(self, v):
         arestas = list()
         if self.vertice_valido(v):
-            index_V = self.N.index(v)
+            index_v = self.N.index(v)
             for i in range(len(self.N)):
-                if self.M[index_V][i] != 0 or self.M[i][index_V] != 0 and i != index_V:  # linha
-                    arestas.append(self.N[i])
+                try:
+                    valor_aresta = self.valor_aresta(f"{v}-{self.N[i]}")
+                    if (valor_aresta != 0) and i != index_v:  # linha
+                        arestas.append(self.N[i])
+                except Exception:
+                    continue
         else:
             raise VerticeInvalidoException('O vértice ' + v + ' é inválido')
         return arestas

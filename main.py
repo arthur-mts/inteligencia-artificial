@@ -41,58 +41,67 @@ def bfs(grafo: Grafo, a, b):
 
 def a_star(a, b, grafo: Grafo, h):
     def f(n, d):
+        if d == b:
+            return 0
         aresta = f"{n}-{d}"
         if not grafo.existeAresta(aresta):
             raise Exception
-        return h(n) + grafo.valorAresta(aresta)
+        return h(n) + grafo.valor_aresta(aresta)
 
-    def reconstroiCaminho(_veio_de, corrente):
+    def reconstroi_caminho(_veio_de, corrente):
         caminho_final = []
         while corrente in _veio_de.keys():
             corrente = _veio_de[corrente]
             caminho_final = [corrente] + caminho_final
+            caminho_final.append(b)
         return caminho_final
 
     percordidos = set()
-    n_percoridos = set()
     veio_de = {}
+    g_score = {}
 
     vertice_cor = a
 
     percordidos.add(vertice_cor)
+
+    g_score[vertice_cor] = 0
+
     while percordidos:
-        vertice_cor = min(percordidos, key = lambda o : f(o, b))
+        vertice_cor = min(percordidos, key=lambda o: f(o, b))
         if vertice_cor == b:
-            return reconstroiCaminho(veio_de, vertice_cor)
+            return reconstroi_caminho(veio_de, vertice_cor)
 
         percordidos.remove(vertice_cor)
 
         for vizinho in grafo.arestas_sobre_vertice(vertice_cor):
+            tentativa = -1 if g_score.get(vertice_cor) is None else g_score.get(vertice_cor) + grafo.valor_aresta(
+                f"{vertice_cor}-{vizinho}")
+
+            g_score_c = -1 if g_score.get(vizinho) is None else g_score.get(vizinho)
+            if g_score_c == -1 or tentativa < g_score_c:
+                veio_de[vizinho] = vertice_cor
+                g_score[vizinho] = tentativa
+
+                percordidos.add(vizinho)
+    raise Exception()
 
 
-
-
-
-
-    while vertice_cor !=
-    adjacentes = grafo.arestas_sobre_vertice(a)
-
-
-    menor_dis = None
-    menor_adj = None
-    for adj in adjacentes:
-        cur_dis = f(a, adj)
-        if menor_dis is None or cur_dis < menor_dis:
-            menor_adj = adj
-            menor_dis = cur_dis
+def h(vertice):
+    return {
+        "RMG": 0,
+        "AREIA": 2,
+        "ESP": 1,
+        "LDM": 2
+    }[vertice]
 
 
 def main():
-    grafo = Grafo(["RMG", "ESP", "AREIA"])
+    grafo = Grafo(["RMG", "ESP", "AREIA", "LDM"])
     grafo.adicionaAresta("RMG-ESP", 5)
     grafo.adicionaAresta("RMG-AREIA", 2)
-    print(bfs(grafo, 'RMG', 'ESP'))
-    print(deep_search(grafo, 'RMG', 'ESP'))
+    grafo.adicionaAresta("LDM-RMG", 2)
+    grafo.adicionaAresta("AREIA-LDM", 1)
+    print(a_star("AREIA", "RMG", grafo, h))
 
 
 if __name__ == '__main__':
