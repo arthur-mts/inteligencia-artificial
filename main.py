@@ -102,13 +102,36 @@ def main():
     grafo = Grafo(reader.ler_vertices())
     for aresta_c in reader.ler_arestas():
         grafo.adicionaAresta(aresta_c["aresta"], aresta_c["distancia"])
-    origem = "Caruaru"
-    destino = "Recife"
-    print(f"Calculando caminho entre {origem} e {destino}")
 
-    print("Algoritmo de Deep Search: ", deep_search(grafo, origem, destino))
-    print("Algoritmo de BFS:", bfs(grafo, origem, destino))
-    print("Algoritmo A*: ", a_star(origem, destino, grafo, h))
+    origem = "Surubim"
+    destino = "Recife"
+    print("Digite 1 para Deep Search\n 2 para BFS\n 3 para A*")
+    metodo = int(input())
+
+    print(f"Calculando caminho entre {origem} e {destino}")
+    if metodo == 1:
+        print(f"Cidades disponíveis: {grafo.N}")
+        print("Digite a origem desejada")
+        origem = input()
+        print("Digite a o destino desejado")
+        destino = input()
+        print("Algoritmo de Deep Search: ", deep_search(grafo, origem, destino))
+    elif metodo == 2:
+        print(f"Cidades disponíveis: {grafo.N}")
+        print("Digite a origem desejada")
+        origem = input()
+        print("Digite a o destino desejado")
+        destino = input()
+        print("Algoritmo de BFS:", bfs(grafo, origem, destino))
+    elif metodo == 3:
+        print(
+            "Para o algoritmo A* é preciso da tabela heustica, que foi previamente preenchida com o destino: Recife")
+        origens_disponiveis = grafo.N[:]
+        origens_disponiveis.remove(destino)
+        print(f"Origens disponíveis: {origens_disponiveis}")
+        print("Digite a origem desejada")
+        origem = input()
+        print("Algoritmo A*: ", a_star(origem, destino, grafo, h))
 
 
 if __name__ == '__main__':
