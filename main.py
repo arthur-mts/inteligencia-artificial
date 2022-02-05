@@ -1,7 +1,7 @@
 from models.graph import Grafo
 from utils.csv_reader import CsvReader
 
-reader = CsvReader("files/heuristica.csv", "files/arestas.csv")
+reader = CsvReader("files/heuristica_final.csv", "files/arestas_final.csv")
 
 
 def deep_search(grafo, a, b):
@@ -98,12 +98,17 @@ def h(vertice):
 
 
 def main():
+    ## Montando objeto do grafo
     grafo = Grafo(reader.ler_vertices())
     for aresta_c in reader.ler_arestas():
         grafo.adicionaAresta(aresta_c["aresta"], aresta_c["distancia"])
-    print(deep_search(grafo, "RMG", "LS"))
-    print(bfs(grafo, "RMG", "LS"))
-    print(a_star("RMG", "LS", grafo, h))
+    origem = "Caruaru"
+    destino = "Recife"
+    print(f"Calculando caminho entre {origem} e {destino}")
+
+    print("Algoritmo de Deep Search: ", deep_search(grafo, origem, destino))
+    print("Algoritmo de BFS:", bfs(grafo, origem, destino))
+    print("Algoritmo A*: ", a_star(origem, destino, grafo, h))
 
 
 if __name__ == '__main__':
