@@ -1,8 +1,9 @@
 from models.graph import Grafo
 from utils.csv_reader import CsvReader
 
-reader = CsvReader("files/heuristica_final.csv", "files/arestas_final.csv")
+#Grupo: Arthur Mauricio, Pedro Guerra, Jonatas Duarte
 
+reader = CsvReader("files/heuristica_final.csv", "files/arestas_final.csv")
 
 def deep_search(grafo, a, b):
     caminho = []
